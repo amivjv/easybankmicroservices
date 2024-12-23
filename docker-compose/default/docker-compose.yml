@@ -1,0 +1,85 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    hostname: rabbitmq
+    container_name: "rabbitmq-ms"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      #      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+
+  configserver:
+    image: "amivjv/configserver:s6"
+    container_name: "configserver-ms"
+    ports:
+      - "8071:8071"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      #      test: [ "CMD", "curl", "-f", "http://localhost:8071/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+
+  accounts:
+    image: "amivjv/accounts:s6"
+    container_name: "accounts-ms"
+    ports:
+      - "8500:8500"
+    depends_on:
+      configserver:
+        condition: service_healthy
+#        condition: service_completed_successfully
+    environment:
+      SPRING_APPLICATION_NAME: "accounts"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+
+  loans:
+    image: "amivjv/loans:s6"
+    container_name: "loans-ms"
+    ports:
+      - "9500:9500"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "loans"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+  cards:
+    image: "amivjv/cards:s6"
+    container_name: "cards-ms"
+    ports:
+      - "9000:9000"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "cards"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+networks:
+  easybank:
+    driver: "bridge"

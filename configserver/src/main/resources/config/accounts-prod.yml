@@ -1,0 +1,13 @@
+
+
+build:
+  version: 1.0
+
+accounts:
+  message: "Welcome to easyBamk Accounts fron prod env."
+  contactsDetails:
+    name: "Amit g"
+    email: "{cipher}b323dfaa3d38137b1998f5e79a8bb31bcc1f21b93c5455dc709c4e743e89a7158b286d66d6819f9eee366e1ed3724d8c"
+  onCallSupport:
+    - 1234567890
+    - 1234567891

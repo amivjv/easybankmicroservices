@@ -1,0 +1,34 @@
+
+#server.port=8081
+#
+#spring.application.name=accounts
+#
+#spring.datasource.url=jdbc:h2:mem:testdb
+#spring.datasource.driverClassName=org.h2.Driver
+#spring.datasource.username=sa
+#spring.datasource.password=sa
+#spring.h2.console.enabled=true
+#spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+#
+#spring.jpa.hibernate.ddl-auto=update
+#spring.jpa.hibernate.show-sql=true
+
+server:
+    port: 8500
+
+spring:
+    application:
+        name: accounts
+
+
+build:
+    version: 3.0
+
+accounts:
+    message: "Welcome to easyBamk Accounts fron default env."
+    contactsDetails:
+        name: "Amit g"
+        email: "jNQKg@example1.com"
+    onCallSupport:
+        - 1234567890
+        - 1234567891

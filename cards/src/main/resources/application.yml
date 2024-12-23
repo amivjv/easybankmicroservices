@@ -1,0 +1,70 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: "cards"
+
+  profiles:
+    active: "prod"
+
+  datasource:
+    url: jdbc:h2:mem:cards
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+
+  config:
+    import: "configserver:http://localhost:8071"
+
+
+
+
+#Refresh configuration at runtime using refresh actuator path
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    shutdown:
+      enabled: true
+
+  info:
+    env:
+      enabled: true
+
+endpoints:
+  shutdown:
+    enabled: true
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+
+  client:
+    service-url:
+      defaultZone: http://localhost:8070/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+
+info:
+  app:
+    name: "cards"
+    description: "Easy bank Cards Service"
+    version: "1.0.0"
