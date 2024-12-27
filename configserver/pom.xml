@@ -73,7 +73,7 @@
 				<version>3.4.4</version>
 				<configuration>
 					<to>
-						<image>amivjv/${project.artifactId}:s6</image>
+						<image>amivjv/${project.artifactId}:s8</image>
 					</to>
 				</configuration>
 			</plugin>
