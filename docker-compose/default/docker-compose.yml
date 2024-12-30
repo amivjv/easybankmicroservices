@@ -18,7 +18,7 @@ services:
 
 
   configserver:
-    image: "amivjv/configserver:s6"
+    image: "amivjv/configserver:s8"
     container_name: "configserver-ms"
     ports:
       - "8071:8071"
@@ -35,50 +35,60 @@ services:
       file: common-config.yml
       service: microservice-base-config
 
+  eurekaserver:
+    image: "amivjv/eurekaserver:s8"
+    container_name: "eurekaserver-ms"
+    ports:
+      - "8070:8070"
+
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      #      test: [ "CMD", "curl", "-f", "http://localhost:8071/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"
 
   accounts:
-    image: "amivjv/accounts:s6"
+    image: "amivjv/accounts:s8"
     container_name: "accounts-ms"
     ports:
       - "8500:8500"
-    depends_on:
-      configserver:
-        condition: service_healthy
-#        condition: service_completed_successfully
+
     environment:
       SPRING_APPLICATION_NAME: "accounts"
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
+      service: microservice-eurekaserver-config
 
 
   loans:
-    image: "amivjv/loans:s6"
+    image: "amivjv/loans:s8"
     container_name: "loans-ms"
     ports:
       - "9500:9500"
-    depends_on:
-      configserver:
-        condition: service_healthy
+
     environment:
       SPRING_APPLICATION_NAME: "loans"
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
+      service: microservice-eurekaserver-config
 
   cards:
-    image: "amivjv/cards:s6"
+    image: "amivjv/cards:s8"
     container_name: "cards-ms"
     ports:
       - "9000:9000"
-    depends_on:
-      configserver:
-        condition: service_healthy
+
     environment:
       SPRING_APPLICATION_NAME: "cards"
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
+      service: microservice-eurekaserver-config
 
 networks:
   easybank:
